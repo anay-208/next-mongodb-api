@@ -1,9 +1,9 @@
 {
   "name": "next-mongodb-api",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "Wrapper for original mongodb fetch api",
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts", 
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts", 
    "scripts": {
     "test": "ts-node test/test.ts",
     "build": "tsc"

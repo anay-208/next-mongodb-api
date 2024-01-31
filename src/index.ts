@@ -40,6 +40,7 @@ class MongoApi {
  * @param next - The next cursor for the MongoDB API, can be used to control cache.
  */
   constructor(url: string, API_KEY: string, dataSource: string, requestOptions: object = {}) {
+    if(!url || !API_KEY || !dataSource) throw new Error("Missing required parameters.");
     if (!url.endsWith("/")) url += "/";
     this.API_KEY = API_KEY;
     this.url = url;
