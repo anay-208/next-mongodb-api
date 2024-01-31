@@ -1,0 +1,10 @@
+node_modules/
+*.log
+*.ts
+*.map
+*.test.ts
+*.spec.ts
+coverage/
+.git/
+.vscode/
+.env
