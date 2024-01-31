@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:anay-208/next-mongodb-api.git"
+    "url": "git+ssh://git@github.com/anay-208/next-mongodb-api.git"
   },
   "keywords": [
     "mongodb",
