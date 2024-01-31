@@ -22,15 +22,16 @@ Then, create a new `MongoApi` instance:
 
 
 ```typescript
-const client = new MongoApi(url, API_KEY, dataSource, next);
+const client = new MongoApi(url, API_KEY, dataSource, {next: {revalidate: 300}});
 const db = client.db("myDatabase")
 ```
 
 you can use the `next` to pass values to 
 ```typescript 
-fetch(url, { next: /*object is passed here*/})
+fetch(url, {  /*object is passed here along with other values*/})
 ```
-By default, it has a revalidate of 300 seconds(5 mins).
+
+if you use nextjs, its highly recommend to add the `revalidate` attribute.
 
 You can then use the `MongoApi` instance to interact with your MongoDB database. Here are some examples:
 

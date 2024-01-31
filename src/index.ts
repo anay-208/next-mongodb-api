@@ -1,3 +1,4 @@
+
 function ObjectId(id : string){
   return {
     "$oid": id
@@ -19,6 +20,7 @@ interface Options {
   };
   headers?: object;
   method?: string;
+  next?: object;
 } 
 class MongoApi {
   databaseName!: string;
@@ -28,7 +30,7 @@ class MongoApi {
   private API_KEY!: string;
   options: Options = {body: {}};
   action!: string;
-  next: object;
+  requestOptions: object | null;
 
   /**
  * The constructor for the MongoApi class.
@@ -37,12 +39,12 @@ class MongoApi {
  * @param dataSource - The data source for the MongoDB API.
  * @param next - The next cursor for the MongoDB API, can be used to control cache.
  */
-  constructor(url: string, API_KEY: string, dataSource: string, next: object = {}) {
+  constructor(url: string, API_KEY: string, dataSource: string, requestOptions: object = {}) {
     if (!url.endsWith("/")) url += "/";
     this.API_KEY = API_KEY;
     this.url = url;
     this.dataSource = dataSource;
-    this.next = next;
+    this.requestOptions = requestOptions;
   }
 /**
  * Dispatches a request to the MongoDB API.
@@ -50,15 +52,12 @@ class MongoApi {
  * @param options - The options for the MongoDB operation.
  * @returns The documents returned by the MongoDB operation.
  */
-  private async dispatchRequest(action: string, options: any) {
+   async dispatchRequest(action: string, options: Options) {
     if (!this.databaseName || !this.collectionName || !this.dataSource)
       throw new Error("Database or collection not specified.");
     const response = await fetch(this.url + action, {
       ...options,
-      next: {
-        revalidate: 300,
-        ...this.next,
-      },
+      ...this.requestOptions,
       body: JSON.stringify({
         dataSource: this.dataSource,
         database: this.databaseName,

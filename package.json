@@ -1,13 +1,13 @@
 {
   "name": "next-mongodb-api",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Wrapper for original mongodb fetch api",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts", 
    "scripts": {
     "test": "ts-node test/test.ts",
     "build": "tsc"
-  },
+    },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/anay-208/next-mongodb-api.git"
