@@ -1,0 +1,28 @@
+{
+  "name": "next-mongodb-api",
+  "version": "1.0.0",
+  "description": "Wrapper for original mongodb fetch api",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "ts-node test/test.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:anay-208/next-mongodb-api.git"
+  },
+  "keywords": [
+    "mongodb",
+    "mongoapi",
+    "next"
+  ],
+  "author": "Anay-208",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anay-208/next-mongodb-api/issues"
+  },
+  "homepage": "https://github.com/anay-208/next-mongodb-api#readme",
+  "dependencies": {
+    "@types/node": "^20.11.13",
+    "dotenv": "^16.4.1"
+  }
+}
