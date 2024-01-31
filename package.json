@@ -22,7 +22,9 @@
   },
   "homepage": "https://github.com/anay-208/next-mongodb-api#readme",
   "dependencies": {
-    "@types/node": "^20.11.13",
+    "@types/node": "^20.11.13"
+  },
+  "devDependencies": {
     "dotenv": "^16.4.1"
   }
 }

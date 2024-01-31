@@ -10,8 +10,9 @@ const client = new MongoApi(
 
 async function main() {
   const db =  client.db("admins");
-    const data = await db.collection("users").find({_id: ObjectId("656a1ac0ad868f2b83dfb585")}).exec();
+    const data = await db.collection("users").find().exec();
     console.log(data)
+    console.log("Success!")
 }
 
 main();

@@ -28,18 +28,21 @@ class MongoApi {
   private API_KEY!: string;
   options: Options = {body: {}};
   action!: string;
+  next: object;
 
   /**
  * The constructor for the MongoApi class.
  * @param url - The base URL for the MongoDB API.
  * @param API_KEY - The API key for the MongoDB API.
  * @param dataSource - The data source for the MongoDB API.
+ * @param next - The next cursor for the MongoDB API, can be used to control cache.
  */
-  constructor(url: string, API_KEY: string, dataSource: string) {
+  constructor(url: string, API_KEY: string, dataSource: string, next: object = {}) {
     if (!url.endsWith("/")) url += "/";
     this.API_KEY = API_KEY;
     this.url = url;
     this.dataSource = dataSource;
+    this.next = next;
   }
 /**
  * Dispatches a request to the MongoDB API.
@@ -52,6 +55,10 @@ class MongoApi {
       throw new Error("Database or collection not specified.");
     const response = await fetch(this.url + action, {
       ...options,
+      next: {
+        revalidate: 300,
+        ...this.next,
+      },
       body: JSON.stringify({
         dataSource: this.dataSource,
         database: this.databaseName,
