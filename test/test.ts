@@ -5,7 +5,7 @@ const {ObjectId} = require("next-mongodb-api")
 const client = new MongoApi(
   process.env.MONGODB_API_ENDPOINT,
   process.env.MONGODB_API_KEY,
-  "Sharlz"
+  process.env.DATA_SOURCE
 );
 
 async function main() {

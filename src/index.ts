@@ -37,7 +37,7 @@ class MongoApi {
  * @param url - The base URL for the MongoDB API.
  * @param API_KEY - The API key for the MongoDB API.
  * @param dataSource - The data source for the MongoDB API.
- * @param next - The next cursor for the MongoDB API, can be used to control cache.
+ * @param requestOptions - if you are using next.js, its highly recommend to add next: {revalidate: 300} as the value.
  */
   constructor(url: string, API_KEY: string, dataSource: string, requestOptions: object = {}) {
     if(!url || !API_KEY || !dataSource) throw new Error("Missing required parameters.");
@@ -211,7 +211,67 @@ aggregate(pipeline: object[]) {
   }
   return this;
 }
-  
+
+
+/**
+ * Sets up a findMany operation.
+ * @param filter - The filter for the find operation.
+ * @param projection - The projection for the find operation.
+ * @returns The MongoApi instance.
+ */
+findMany(filter : object ={}, projection : object = {}) {
+  this.action = "find";
+  this.options = {
+    method: "POST",
+    body: {
+      filter,
+      projection,
+    },
+  }
+  return this;
+}
+
+/**
+ * Sets up an updateMany operation.
+ * @param filter - The filter to select the documents to update.
+ * @param update - The update to apply to the documents.
+ * @returns The MongoApi instance.
+ */
+updateMany(filter: object, update: object) {
+  this.action = "updateMany";
+  this.options = {
+    method: "POST",
+    body: {
+      filter,
+      update,
+    },
+  }
+  return this;
+}
+
+/**
+ * Sets up a deleteMany operation.
+ * @param filter - The filter to select the documents to delete.
+ * @returns The MongoApi instance.
+ */
+deleteMany(filter: object) {
+  this.action = "deleteMany";
+  this.options = {
+    method: "POST",
+    body: {
+      filter,
+    },
+  }
+  return this;
+}
+
+/**
+ * Sets up a findOneAndUpdate operation.
+ * @param filter - The filter to select the document to update.
+ * @param update - The update to apply to the document.
+ * @returns The original document before it was updated.
+ */
+
 }
 
 export default MongoApi; // for TypeScript and ES6
