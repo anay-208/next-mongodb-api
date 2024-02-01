@@ -1,6 +1,5 @@
 node_modules/
 *.log
-*.ts
 *.map
 *.test.ts
 *.spec.ts

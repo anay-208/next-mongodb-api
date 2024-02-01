@@ -39,6 +39,9 @@ You can then use the `MongoApi` instance to interact with your MongoDB database.
 // Find documents
 db.collection('myCollection').find({ name: 'John' }).exec();
 
+// Find documents and sort and limit
+db.collection('myCollection').find({ name: 'John' }).limit(1).exec();
+
 // Insert a document
 db.collection('myCollection').insertOne({ name: 'John', age: 30 }).exec();
 
@@ -50,6 +53,8 @@ db.collection('myCollection').deleteOne({ name: 'John' }).exec();
 
 // Aggregate documents
 db.collection('myCollection').aggregate([{ $match: { age: { $gt: 20 } } }]).exec();
+
+
 ```
 
 If you'd like more methods, just create an issue, and I'll add it within 24 hours!
@@ -62,12 +67,16 @@ The `MongoApi` class has the following methods:
 - `db(databaseName: string)`: Sets the database to use for the MongoDB operations.
 - `collection(collectionName: string)`: Sets the collection to use for the MongoDB operations.
 - `find(filter: object, projection: object)`: Sets up a find operation.
+- `findOne(filter: object, projection: object)`: Sets up a findOne operation. 
+- `findMany(filter: object, projection: object)`: Sets up a findMany operation. 
+- `updateMany(filter: object, update: object)`: Sets up an updateMany operation. This 
+- `deleteMany(filter: object)`: Sets up a deleteMany operation. 
 - `insertOne(document: object)`: Sets up an insertOne operation.
 - `updateOne(filter: object, update: object)`: Sets up an updateOne operation.
 - `deleteOne(filter: object)`: Sets up a deleteOne operation.
 - `aggregate(pipeline: object[])`: Sets up an aggregate operation.
 - `sort(options: object)`: Sets the sort options for the find operation.
-- `limit(options: object)`: Sets the limit for the find operation.
+- `limit(number: number)`: Sets the limit for the find operation.
 - `exec()`: Executes the MongoDB operation.
 
 The `ObjectId` function creates an ObjectId object:

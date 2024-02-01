@@ -13,8 +13,9 @@ interface Options {
       filter?: object;
       projection?: object;
       sort?: object;
-      limit?: object;
+      limit?: number;
       document?: object;
+      documents?: object[];
       update?: object;
       pipeline?: object;
   };
@@ -108,11 +109,11 @@ class MongoApi {
 
   /**
  * Sets the limit for the find operation.
- * @param options - The limit.
+ * @param number - The limit.
  * @returns The MongoApi instance.
  */
-  limit(options: object) {
-      this.options.body.limit = options;
+  limit(number: number) {
+      this.options.body.limit = number;
       return this;
   }
 
@@ -157,6 +158,17 @@ class MongoApi {
       method: "POST",
       body: {
         document,
+      },
+    }
+    return this;
+  }
+
+  insertMany(documents: object[]) {
+    this.action = "insertMany";
+    this.options = {
+      method: "POST",
+      body: {
+        documents,
       },
     }
     return this;
@@ -212,6 +224,24 @@ aggregate(pipeline: object[]) {
   return this;
 }
 
+/**
+ * Sets up a findOne operation, its basically find() with a limit of 1.
+ * @param filter - The filter for the find operation.
+ * @param projection - The projection for the find operation.
+ * @returns The MongoApi instance.
+ */
+findOne(filter : object ={}, projection : object = {}) {
+  this.action = "find";
+  this.options = {
+    method: "POST",
+    body: {
+      filter,
+      projection,
+      limit: 1
+    },
+  }
+  return this;
+}
 
 /**
  * Sets up a findMany operation.
@@ -265,12 +295,6 @@ deleteMany(filter: object) {
   return this;
 }
 
-/**
- * Sets up a findOneAndUpdate operation.
- * @param filter - The filter to select the document to update.
- * @param update - The update to apply to the document.
- * @returns The original document before it was updated.
- */
 
 }
 
