@@ -1,6 +1,6 @@
 {
   "name": "next-mongodb-api",
-  "version": "1.1.1",
+  "version": "1.1.25",
   "description": "Wrapper for original mongodb fetch api",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -18,7 +18,7 @@
     "next"
   ],
   "author": "Anay-208",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/anay-208/next-mongodb-api/issues"
   },

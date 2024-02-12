@@ -31,9 +31,10 @@ you can use the `next` to pass values to
 fetch(url, {  /*object is passed here along with other values*/})
 ```
 
-if you use nextjs, its highly recommend to add the `revalidate` attribute.
+if you use nextjs, its highly recommend to add the `revalidate` attribute like this.
+You can then use the `MongoApi` instance to interact with your MongoDB database. Here are some 
 
-You can then use the `MongoApi` instance to interact with your MongoDB database. Here are some examples:
+examples:
 
 ```typescript
 // Find documents
