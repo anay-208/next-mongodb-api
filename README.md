@@ -20,42 +20,47 @@ import MongoApi, { ObjectId } from 'next-mongodb-api';
 
 Then, create a new `MongoApi` instance:
 
-
 ```typescript
-const client = new MongoApi(url, API_KEY, dataSource, {next: {revalidate: 300}});
+const client = new MongoApi({url: 'your_url', API_KEY: 'your_api_key', dataSource: 'your_data_source'}, {next: {revalidate: 300}});
 const db = client.db("myDatabase")
+
 ```
 
-you can use the `next` to pass values to 
+You can use the `next` to pass values to 
 ```typescript 
 fetch(url, {  /*object is passed here along with other values*/})
 ```
 
-if you use nextjs, its highly recommend to add the `revalidate` attribute like this.
-You can then use the `MongoApi` instance to interact with your MongoDB database. Here are some 
-
-examples:
+If you use nextjs, it's highly recommended to add the `revalidate` attribute like this.
+You can then use the `MongoApi` instance to interact with your MongoDB database. Here are some examples:
 
 ```typescript
+// Define a type for your collection
+type Collection = {
+  name: string,
+  number: number
+}
+
+const collection = db.collection<Collection>("myCollection")
+
+
 // Find documents
-db.collection('myCollection').find({ name: 'John' }).exec();
+collection.find({ name: 'John' });
 
 // Find documents and sort and limit
-db.collection('myCollection').find({ name: 'John' }).limit(1).exec();
+collection.find({ name: 'John' }, {}, { limit: 1 });
 
 // Insert a document
-db.collection('myCollection').insertOne({ name: 'John', age: 30 }).exec();
+collection.insertOne({ name: 'John', age: 30 });
 
 // Update a document
-db.collection('myCollection').updateOne({ name: 'John' }, { $set: { age: 31 } }).exec();
+collection.updateOne({ name: 'John' }, { $set: { age: 31 } });
 
 // Delete a document
-db.collection('myCollection').deleteOne({ name: 'John' }).exec();
+collection.deleteOne({ name: 'John' });
 
 // Aggregate documents
-db.collection('myCollection').aggregate([{ $match: { age: { $gt: 20 } } }]).exec();
-
-
+collection.aggregate([{ $match: { age: { $gt: 20 } } }]);
 ```
 
 If you'd like more methods, just create an issue, and I'll add it within 24 hours!
@@ -64,21 +69,19 @@ If you'd like more methods, just create an issue, and I'll add it within 24 hour
 
 The `MongoApi` class has the following methods:
 
-- `constructor(url: string, API_KEY: string, dataSource: string, next: object)`: Creates a new `MongoApi` instance.
+- `constructor({url: string, API_KEY: string, dataSource: string}, requestOptions: object)`: Creates a new `MongoApi` instance.
 - `db(databaseName: string)`: Sets the database to use for the MongoDB operations.
-- `collection(collectionName: string)`: Sets the collection to use for the MongoDB operations.
-- `find(filter: object, projection: object)`: Sets up a find operation.
-- `findOne(filter: object, projection: object)`: Sets up a findOne operation. 
-- `findMany(filter: object, projection: object)`: Sets up a findMany operation. 
+- `collection<Schema = T>(collectionName: string)`: Sets the collection to use for the MongoDB operations.
+- `find(filter: object = {}, projection: object = {}, options: FindOptions = {})`: Sets up a find operation.
+- `findOne(filter: object = {}, projection: object = {}, options: FindOptions = { limit: 1 })`: Sets up a findOne operation. 
+- `findMany(filter: object = {}, projection: object = {}, options: FindOptions = {})`: Sets up a findMany operation. 
 - `updateMany(filter: object, update: object)`: Sets up an updateMany operation. This 
 - `deleteMany(filter: object)`: Sets up a deleteMany operation. 
 - `insertOne(document: object)`: Sets up an insertOne operation.
+- `insertMany(documents: object[])`: Sets up an insertMany operation.
 - `updateOne(filter: object, update: object)`: Sets up an updateOne operation.
 - `deleteOne(filter: object)`: Sets up a deleteOne operation.
 - `aggregate(pipeline: object[])`: Sets up an aggregate operation.
-- `sort(options: object)`: Sets the sort options for the find operation.
-- `limit(number: number)`: Sets the limit for the find operation.
-- `exec()`: Executes the MongoDB operation.
 
 The `ObjectId` function creates an ObjectId object:
 

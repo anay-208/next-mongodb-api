@@ -1,60 +1,59 @@
-
-function ObjectId(id : string){
+function ObjectId(id: string) {
   return {
-    "$oid": id
-  }
+    $oid: id,
+  };
 }
-
-
-
 
 interface Options {
   body: {
-      filter?: object;
-      projection?: object;
-      sort?: object;
-      limit?: number;
-      document?: object;
-      documents?: object[];
-      update?: object;
-      pipeline?: object;
+    filter?: object;
+    projection?: object;
+    sort?: object;
+    limit?: number;
+    document?: object;
+    documents?: object[];
+    update?: object;
+    pipeline?: object;
   };
   headers?: object;
   method?: string;
   next?: object;
-} 
-class MongoApi {
+}
+
+type FindOptions = {
+  sort?: object,
+  limit?: number
+}
+
+class MongoApi<T = object | object[]> {
   databaseName!: string;
   collectionName!: string;
   dataSource!: string;
   url!: string;
   private API_KEY!: string;
-  options: Options = {body: {}};
+  options: Options = { body: {} };
   action!: string;
   requestOptions: object | null;
+  Schema: object | undefined;
 
-  /**
- * The constructor for the MongoApi class.
- * @param url - The base URL for the MongoDB API.
- * @param API_KEY - The API key for the MongoDB API.
- * @param dataSource - The data source for the MongoDB API.
- * @param requestOptions - if you are using next.js, its highly recommend to add next: {revalidate: 300} as the value.
- */
-  constructor(url: string, API_KEY: string, dataSource: string, requestOptions: object = {}) {
-    if(!url || !API_KEY || !dataSource) throw new Error("Missing required parameters.");
+  constructor(
+    {
+      url,
+      API_KEY,
+      dataSource,
+    }: { url: string; API_KEY: string; dataSource: string },
+    requestOptions: object = {}
+  ) {
+    if (!url || !API_KEY || !dataSource)
+      throw new Error("Missing required parameters.");
     if (!url.endsWith("/")) url += "/";
     this.API_KEY = API_KEY;
     this.url = url;
     this.dataSource = dataSource;
     this.requestOptions = requestOptions;
   }
-/**
- * Dispatches a request to the MongoDB API.
- * @param action - The MongoDB operation to perform.
- * @param options - The options for the MongoDB operation.
- * @returns The documents returned by the MongoDB operation.
- */
-   async dispatchRequest(action: string, options: Options) {
+
+  async dispatchRequest(action: string, options: Options) {
     if (!this.databaseName || !this.collectionName || !this.dataSource)
       throw new Error("Database or collection not specified.");
     const response = await fetch(this.url + action, {
@@ -73,232 +72,217 @@ class MongoApi {
         ...options.headers,
       },
     });
-    const json = await response.json() as { documents?: object | object[] };
-        return json.documents ? json.documents : json;
+    const json = (await response.json()) as { documents?: object | object[] };
+    return json.documents ? json.documents : json;
   }
 
-/**
- * Sets the database to use for the MongoDB operations.
- * @param databaseName - The name of the database.
- * @returns The MongoApi instance.
- */
-   db(databaseName: string) {
+  db(databaseName: string) {
     this.databaseName = databaseName;
     return this;
   }
-/**
- * Sets the collection to use for the MongoDB operations.
- * @param collectionName - The name of the collection.
- * @returns The MongoApi instance.
- */
-   collection(collectionName: string) {
+
+  collection<Schema = T>(collectionName: string) {
     this.collectionName = collectionName;
-    return this;
+    return this as unknown as MongoApi<Schema>;
   }
-
+/**
+ * Find documents in the collection.
+ * @param {object} filter - The filter criteria.
+ * @param {object} projection - The projection criteria.
+ * @param {FindOptions} options - The options for sorting and limiting the results.
+ * @returns {Promise<T>} The found documents.
+ */
+async find(
+  filter: object = {},
+  projection: object = {},
+  options: FindOptions = {}
+): Promise<T> {
+  this.action = "find";
+  this.options = {
+    method: "POST",
+    body: {
+      filter,
+      projection,
+      ...options,
+    },
+  };
+  return await this.dispatchRequest(this.action, this.options) as T;
+}
 
   /**
- * Sets the sort options for the find operation.
- * @param options - The sort options.
- * @returns The MongoApi instance.
- */
-   sort(options: object) {
-      this.options.body.sort = options;
-      return this;
-  }
-
-  /**
- * Sets the limit for the find operation.
- * @param number - The limit.
- * @returns The MongoApi instance.
- */
-  limit(number: number) {
-      this.options.body.limit = number;
-      return this;
-  }
-
-/**
- * Executes the MongoDB operation.
- * @returns The documents returned by the MongoDB operation.
- */
-  async exec(){
-    if(!this.action || !this.options) throw new Error("No action specified. Use find() or insertOne() or insertMany() or updateOne() or updateMany() or deleteOne() or deleteMany() or count() or aggregate() methods.")
-    const { action, options } = this;
-  this.action = "";
-  this.options = {body: {}};
-  const response = await this.dispatchRequest(action, options);
-  return response;
-  }
-
-/**
- * Sets up a find operation.
- * @param filter - The filter for the find operation.
- * @param projection - The projection for the find operation.
- * @returns The MongoApi instance.
- */
-  find(filter : object ={}, projection : object = {}) {
-    this.action = "find";
-    this.options = {
-      method: "POST",
-      body: {
-        filter,
-        projection,
-      },
-    }
-    return this;
-  }
-/**
- * Sets up an insertOne operation.
- * @param document - The document to insert.
- * @returns The MongoApi instance.
- */
-  insertOne(document: object) {
-    this.action = "insertOne";
-    this.options = {
-      method: "POST",
-      body: {
-        document,
-      },
-    }
-    return this;
-  }
-
-  insertMany(documents: object[]) {
-    this.action = "insertMany";
-    this.options = {
-      method: "POST",
-      body: {
-        documents,
-      },
-    }
-    return this;
-  }
-
-/**
- * Sets up an updateOne operation.
- * @param filter - The filter to select the document to update.
- * @param update - The update to apply to the document.
- * @returns The MongoApi instance.
- */
-  updateOne(filter: object, update: object) {
-    this.action = "updateOne";
-    this.options = {
-      method: "POST",
-      body: {
-        filter,
-        update,
-      },
-    }
-    return this;
-  }
-
-/**
- * Sets up a deleteOne operation.
- * @param filter - The filter to select the document to delete.
- * @returns The MongoApi instance.
- */
-  deleteOne(filter: object) {
-    this.action = "deleteOne";
-    this.options = {
-      method: "POST",
-      body: {
-        filter,
-      },
-    }
-    return this;
-  }
-  
-  /**
-   * Sets up an aggregate operation.
-   * @param pipeline - The aggregation pipeline.
-   * @returns The MongoApi instance.
+   * Perform an aggregation pipeline operation.
+   * @param {object[]} pipeline - The aggregation pipeline.
+   * @returns {Promise<T>} The result of the operation.
    */
-aggregate(pipeline: object[]) {
-  this.action = "aggregate";
+  async aggregate(pipeline: object[]) {
+    this.action = "aggregate";
+    this.options = {
+      method: "POST",
+      body: {
+        pipeline,
+      },
+    };
+    return await this.dispatchRequest(this.action, this.options);
+  }
+  /**
+ * Find one document in the collection.
+ * @param {object} filter - The filter criteria.
+ * @param {object} projection - The projection criteria.
+ * @param {FindOptions} options - The options for sorting and limiting the results.
+ * @returns {Promise<T>} The found document.
+  */
+async findOne(
+  filter: object = {},
+  projection: object = {},
+  options: FindOptions = { limit: 1 }
+  ) {
+  this.action = "find";
+  
   this.options = {
     method: "POST",
     body: {
-      pipeline,
+      filter,
+      projection,
+      ...options,
     },
-  }
-  return this;
+  };
+  return await this.dispatchRequest(this.action, this.options);
 }
 
 /**
- * Sets up a findOne operation, its basically find() with a limit of 1.
- * @param filter - The filter for the find operation.
- * @param projection - The projection for the find operation.
- * @returns The MongoApi instance.
+ * Find many documents in the collection.
+ * @param {object} filter - The filter criteria.
+ * @param {object} projection - The projection criteria.
+ * @param {FindOptions} options - The options for sorting and limiting the results.
+ * @returns {Promise<T>} The found documents.
  */
-findOne(filter : object ={}, projection : object = {}) {
+async findMany(
+  filter: object = {},
+  projection: object = {},
+  options: FindOptions = {}
+) {
   this.action = "find";
   this.options = {
     method: "POST",
     body: {
       filter,
       projection,
-      limit: 1
+      ...options,
     },
-  }
-  return this;
+  };
+  return await this.dispatchRequest(this.action, this.options);
 }
 
+
+
+
 /**
- * Sets up a findMany operation.
- * @param filter - The filter for the find operation.
- * @param projection - The projection for the find operation.
- * @returns The MongoApi instance.
+ * Insert one document into the collection.
+ * @param {object} document - The document to insert.
+ * @returns {Promise<object>} The result of the operation.
  */
-findMany(filter : object ={}, projection : object = {}) {
-  this.action = "find";
+async insertOne(document: object) {
+  this.action = "insertOne";
   this.options = {
     method: "POST",
     body: {
-      filter,
-      projection,
+      document,
     },
-  }
-  return this;
+  };
+  return await this.dispatchRequest(this.action, this.options);
 }
 
 /**
- * Sets up an updateMany operation.
- * @param filter - The filter to select the documents to update.
- * @param update - The update to apply to the documents.
- * @returns The MongoApi instance.
+ * Insert many documents into the collection.
+ * @param {object[]} documents - The documents to insert.
+ * @returns {Promise<object>} The result of the operation.
  */
-updateMany(filter: object, update: object) {
-  this.action = "updateMany";
+async insertMany(documents: object[]) {
+  this.action = "insertMany";
+  this.options = {
+    method: "POST",
+    body: {
+      documents,
+    },
+  };
+  return await this.dispatchRequest(this.action, this.options);
+}
+
+/**
+ * Update one document in the collection.
+ * @param {object} filter - The filter criteria.
+ * @param {object} update - The update operations to be applied to the document.
+ * @returns {Promise<object>} The result of the operation.
+ */
+async updateOne(filter: object, update: object) {
+  this.action = "updateOne";
   this.options = {
     method: "POST",
     body: {
       filter,
       update,
     },
-  }
-  return this;
+  };
+  return await this.dispatchRequest(this.action, this.options);
 }
 
-/**
- * Sets up a deleteMany operation.
- * @param filter - The filter to select the documents to delete.
- * @returns The MongoApi instance.
- */
-deleteMany(filter: object) {
-  this.action = "deleteMany";
-  this.options = {
-    method: "POST",
-    body: {
-      filter,
-    },
+
+  /**
+   * Update many documents in the collection.
+   * @param {object} filter - The filter criteria.
+   * @param {object} update - The update operations to be applied to the documents.
+   * @returns {Promise<object>} The result of the operation.
+   */
+  async updateMany(filter: object, update: object) {
+    this.action = "updateMany";
+    this.options = {
+      method: "POST",
+      body: {
+        filter,
+        update,
+      },
+    };
+    return await this.dispatchRequest(this.action, this.options);
   }
-  return this;
-}
+
+
+  /**
+   * Delete one document from the collection.
+   * @param {object} filter - The filter criteria.
+   * @returns {Promise<object>} The result of the operation.
+   */
+  async deleteOne(filter: object) {
+    this.action = "deleteOne";
+    this.options = {
+      method: "POST",
+      body: {
+        filter,
+      },
+    };
+    return await this.dispatchRequest(this.action, this.options);
+  }
+
+  /**
+   * Delete many documents from the collection.
+   * @param {object} filter - The filter criteria.
+   * @returns {Promise<T>} The result of the operation.
+   */
+  async deleteMany(filter: object) {
+    this.action = "deleteMany";
+    this.options = {
+      method: "POST",
+      body: {
+        filter,
+      },
+    };
+    return await this.dispatchRequest(this.action, this.options);
+  }
+
 
 
 }
 
 export default MongoApi; // for TypeScript and ES6
 module.exports = MongoApi; // for CommonJS
-export { ObjectId}
-module.exports.ObjectId = ObjectId; 
+export { ObjectId };
+module.exports.ObjectId = ObjectId;

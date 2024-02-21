@@ -1,16 +1,22 @@
 require("dotenv").config();
-const MongoApi = require("../src/index");
+import MongoApi from "../src/index";
 
-const client = new MongoApi(
-  process.env.MONGODB_API_ENDPOINT,
-  process.env.MONGODB_API_KEY,
-  process.env.DATA_SOURCE
-);
+const client = new MongoApi({
+  url: process.env.MONGODB_API_ENDPOINT as string,
+  API_KEY: process.env.MONGODB_API_KEY as string,
+  dataSource: process.env.DATA_SOURCE as string
+});
+
+type Collection = {
+  name: string,
+  number: number,
+}
 
 async function main() {
   console.time('dbFetch')
   const db =  client.db("admins");
-    const data = await db.collection("users").findOne().exec();
+    const collection = await db.collection<Collection>("users")
+    const data = await collection.findOne()
     console.log(data)
     console.log("Success!")
     console.timeEnd("dbFetch")
