@@ -124,30 +124,6 @@ async find(
     };
     return await this.dispatchRequest(this.action, this.options);
   }
-  /**
- * Find one document in the collection.
- * @param {object} filter - The filter criteria.
- * @param {object} projection - The projection criteria.
- * @param {FindOptions} options - The options for sorting and limiting the results.
- * @returns {Promise<T>} The found document.
-  */
-async findOne(
-  filter: object = {},
-  projection: object = {},
-  options: FindOptions = { limit: 1 }
-  ) {
-  this.action = "find";
-  
-  this.options = {
-    method: "POST",
-    body: {
-      filter,
-      projection,
-      ...options,
-    },
-  };
-  return await this.dispatchRequest(this.action, this.options);
-}
 
 /**
  * Find many documents in the collection.

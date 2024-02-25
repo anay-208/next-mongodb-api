@@ -26,5 +26,10 @@
   "devDependencies": {
     "@types/node": "^20.11.15",
     "dotenv": "^16.4.1"
-  }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
 }

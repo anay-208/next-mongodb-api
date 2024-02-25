@@ -16,7 +16,7 @@ async function main() {
   console.time('dbFetch')
   const db =  client.db("admins");
     const collection = await db.collection<Collection>("users")
-    const data = await collection.findOne()
+    const data = await collection.find({}, {}, {limit: 1})
     console.log(data)
     console.log("Success!")
     console.timeEnd("dbFetch")

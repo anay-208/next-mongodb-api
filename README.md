@@ -73,7 +73,6 @@ The `MongoApi` class has the following methods:
 - `db(databaseName: string)`: Sets the database to use for the MongoDB operations.
 - `collection<Schema = T>(collectionName: string)`: Sets the collection to use for the MongoDB operations.
 - `find(filter: object = {}, projection: object = {}, options: FindOptions = {})`: Sets up a find operation.
-- `findOne(filter: object = {}, projection: object = {}, options: FindOptions = { limit: 1 })`: Sets up a findOne operation. 
 - `findMany(filter: object = {}, projection: object = {}, options: FindOptions = {})`: Sets up a findMany operation. 
 - `updateMany(filter: object, update: object)`: Sets up an updateMany operation. This 
 - `deleteMany(filter: object)`: Sets up a deleteMany operation. 
