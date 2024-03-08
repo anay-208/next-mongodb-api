@@ -96,7 +96,7 @@ async find(
   filter: object = {},
   projection: object = {},
   options: FindOptions = {}
-): Promise<T> {
+): Promise<T[]> {
   this.action = "find";
   this.options = {
     method: "POST",
@@ -106,7 +106,7 @@ async find(
       ...options,
     },
   };
-  return await this.dispatchRequest(this.action, this.options) as T;
+  return await this.dispatchRequest(this.action, this.options) as T[];
 }
 
   /**
