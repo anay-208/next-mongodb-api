@@ -72,7 +72,7 @@ class MongoApi<T = object | object[]> {
         ...options.headers,
       },
     });
-    const json = (await response.json()) as { documents?: object | object[] };
+    const json = (await response.json()) as { documents?: T[] };
     return json.documents ? json.documents : json;
   }
 

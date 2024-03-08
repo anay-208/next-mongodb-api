@@ -14,8 +14,8 @@ type Collection = {
 
 async function main() {
   console.time('dbFetch')
-  const db =  client.db("admins");
-    const collection = await db.collection<Collection>("users")
+  const db =  client.db(process.env.DB_NAME as string);
+    const collection = db.collection<Collection>(process.env.COLLECTION_NAME as string)
     const data = await collection.find({}, {}, {limit: 1})
     console.log(data)
     console.log("Success!")
