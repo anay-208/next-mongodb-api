@@ -16,8 +16,8 @@ async function main() {
   console.time('dbFetch')
   const db =  client.db(process.env.DB_NAME as string);
     const collection = db.collection<Collection>(process.env.COLLECTION_NAME as string)
-    const data = await collection.find({}, {}, {limit: 1})
-    console.log(data)
+    const data = await collection.find({}, {}, {limit: 2})
+    console.log(data, data.length)
     console.log("Success!")
     console.timeEnd("dbFetch")
 }

@@ -20,9 +20,10 @@ interface Options {
   next?: object;
 }
 
-type FindOptions = {
+interface FindOptions {
   sort?: object,
   limit?: number
+  skip?: number
 }
 
 class MongoApi<T = object | object[]> {
