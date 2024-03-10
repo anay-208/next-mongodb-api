@@ -48,6 +48,7 @@ class MongoApi<T = object | object[]> {
     if (!url || !API_KEY || !dataSource)
       throw new Error("Missing required parameters.");
     if (!url.endsWith("/")) url += "/";
+    if(!url.endsWith("action/")) url += "action/";
     this.API_KEY = API_KEY;
     this.url = url;
     this.dataSource = dataSource;
