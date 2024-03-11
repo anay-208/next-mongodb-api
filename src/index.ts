@@ -26,6 +26,25 @@ interface FindOptions {
   skip?: number
 }
 
+
+interface InsertOne {
+  insertedId: string;
+
+}
+
+interface insertMany {
+  insertedIds: string[];
+}
+
+interface Update {
+  matchedCount: number;
+  modifiedCount: number;
+}
+
+interface Delete {
+  deletedCount: 1
+}
+
 class MongoApi<T = object | object[]> {
   databaseName!: string;
   collectionName!: string;
@@ -157,7 +176,7 @@ async findMany(
 /**
  * Insert one document into the collection.
  * @param {object} document - The document to insert.
- * @returns {Promise<object>} The result of the operation.
+ * @returns {Promise<InsertOne>} The result of the operation.
  */
 async insertOne(document: object) {
   this.action = "insertOne";
@@ -167,7 +186,7 @@ async insertOne(document: object) {
       document,
     },
   };
-  return await this.dispatchRequest(this.action, this.options);
+  return await this.dispatchRequest(this.action, this.options) as InsertOne;
 }
 
 /**
@@ -183,7 +202,7 @@ async insertMany(documents: object[]) {
       documents,
     },
   };
-  return await this.dispatchRequest(this.action, this.options);
+  return await this.dispatchRequest(this.action, this.options) as insertMany;
 }
 
 /**
@@ -201,7 +220,7 @@ async updateOne(filter: object, update: object) {
       update,
     },
   };
-  return await this.dispatchRequest(this.action, this.options);
+  return await this.dispatchRequest(this.action, this.options) as Update;
 }
 
 
@@ -220,7 +239,7 @@ async updateOne(filter: object, update: object) {
         update,
       },
     };
-    return await this.dispatchRequest(this.action, this.options);
+    return await this.dispatchRequest(this.action, this.options) as Update;
   }
 
 
@@ -237,7 +256,7 @@ async updateOne(filter: object, update: object) {
         filter,
       },
     };
-    return await this.dispatchRequest(this.action, this.options);
+    return await this.dispatchRequest(this.action, this.options) as Delete;
   }
 
   /**
@@ -253,7 +272,7 @@ async updateOne(filter: object, update: object) {
         filter,
       },
     };
-    return await this.dispatchRequest(this.action, this.options);
+    return await this.dispatchRequest(this.action, this.options) as Delete;
   }
 
 

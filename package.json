@@ -1,6 +1,6 @@
 {
   "name": "next-mongodb-api",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Wrapper for original mongodb fetch api",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
