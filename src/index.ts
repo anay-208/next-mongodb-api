@@ -143,32 +143,8 @@ async find(
         pipeline,
       },
     };
-    return await this.dispatchRequest(this.action, this.options);
+    return await this.dispatchRequest(this.action, this.options) as any; //TODO
   }
-
-/**
- * Find many documents in the collection.
- * @param {object} filter - The filter criteria.
- * @param {object} projection - The projection criteria.
- * @param {FindOptions} options - The options for sorting and limiting the results.
- * @returns {Promise<T>} The found documents.
- */
-async findMany(
-  filter: object = {},
-  projection: object = {},
-  options: FindOptions = {}
-) {
-  this.action = "find";
-  this.options = {
-    method: "POST",
-    body: {
-      filter,
-      projection,
-      ...options,
-    },
-  };
-  return await this.dispatchRequest(this.action, this.options);
-}
 
 
 
@@ -279,7 +255,5 @@ async updateOne(filter: object, update: object) {
 
 }
 
-export default MongoApi; // for TypeScript and ES6
-module.exports = MongoApi; // for CommonJS
+export default MongoApi;
 export { ObjectId };
-module.exports.ObjectId = ObjectId;

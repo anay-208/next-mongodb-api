@@ -1,25 +1,25 @@
-require("dotenv").config();
-import MongoApi from "../src/index";
+import "dotenv/config";
+import MongoApi from '../src/index';
 
-const client = new MongoApi({
-  url: process.env.MONGODB_API_ENDPOINT as string,
-  API_KEY: process.env.MONGODB_API_KEY as string,
-  dataSource: process.env.DATA_SOURCE as string
+describe('MongoApi', () => {
+  let client: MongoApi;
+  beforeAll(async () => {
+
+
+    client = new MongoApi({
+      url: process.env.MONGODB_API_ENDPOINT as string,
+      API_KEY: process.env.MONGODB_API_KEY as string,
+      dataSource: process.env.DATA_SOURCE as string,
+    });
+  });
+  
+  
+  it('should find 1 document', async () => {
+    const db = client.db(process.env.DB_NAME as string)
+    const collection = db.collection(process.env.COLLECTION_NAME as string);
+
+
+    const data = await collection.find({}, {}, {limit: 1});
+    expect(data?.[0]).toHaveProperty('_id');
+  });
 });
-
-type Collection = {
-  name: string,
-  number: number,
-}
-
-async function main() {
-  console.time('dbFetch')
-  const db =  client.db(process.env.DB_NAME as string);
-    const collection = db.collection<Collection>(process.env.COLLECTION_NAME as string)
-    const data = await collection.deleteOne({name: "test", number: 3})
-    console.log(data)
-    console.log("Success!")
-    console.timeEnd("dbFetch")
-}
-
-main();
