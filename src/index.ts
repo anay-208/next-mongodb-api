@@ -62,7 +62,7 @@ class MongoApi<T = object | object[]> {
       API_KEY,
       dataSource,
     }: { url: string; API_KEY: string; dataSource: string },
-    requestOptions: object = {}
+    requestOptions: object  = {}
   ) {
     if (!url || !API_KEY || !dataSource)
       throw new Error("Missing required parameters.");
@@ -96,16 +96,26 @@ class MongoApi<T = object | object[]> {
     const json = (await response.json()) as { documents?: T[] };
     return json.documents ? json.documents : json;
   }
+db(databaseName: string) {
+  const newInstance = new MongoApi({
+    url: this.url,
+    API_KEY: this.API_KEY,
+    dataSource: this.dataSource
+  }, this.requestOptions || {});
+  newInstance.databaseName = databaseName;
+  return newInstance;
+}
 
-  db(databaseName: string) {
-    this.databaseName = databaseName;
-    return this;
-  }
-
-  collection<Schema = T>(collectionName: string) {
-    this.collectionName = collectionName;
-    return this as unknown as MongoApi<Schema>;
-  }
+collection<Schema = T>(collectionName: string) {
+  const newInstance = new MongoApi({
+    url: this.url,
+    API_KEY: this.API_KEY,
+    dataSource: this.dataSource
+  }, this.requestOptions || {});
+  newInstance.databaseName = this.databaseName;
+  newInstance.collectionName = collectionName;
+  return newInstance as unknown as MongoApi<Schema>;
+}
 /**
  * Find documents in the collection.
  * @param {object} filter - The filter criteria.
