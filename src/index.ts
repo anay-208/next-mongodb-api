@@ -126,7 +126,7 @@ class MongoApi<T extends object | undefined = object | object[]> {
    * @returns {Promise<T[]>} The found documents.
    */
   find(
-    filter: T,
+    filter: Partial<T>,
     projection: object = {},
     // Limit 0 is equivalent of setting nolimit
     options: FindOptions = { sort: {}, limit: 0, skip: 0}
