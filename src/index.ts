@@ -4,9 +4,9 @@ function ObjectId(id: string) {
   };
 }
 
-interface Options {
+interface Options<T extends object | undefined = object> {
   body: {
-    filter?: object;
+    filter?: T;
     projection?: object;
     sort?: object;
     limit?: number;
@@ -14,6 +14,7 @@ interface Options {
     documents?: object[];
     update?: object;
     pipeline?: object;
+    skip?: number;
   };
   headers?: object;
   method?: string;
@@ -43,16 +44,13 @@ interface Delete {
   deletedCount: number;
 }
 
-class MongoApi<T = object | object[]> {
+class MongoApi<T extends object | undefined = object | object[]> {
   databaseName!: string;
   collectionName!: string;
   dataSource!: string;
   url!: string;
   private API_KEY!: string;
-  options: Options = { body: {} };
-  action!: string;
-  requestOptions: object | null;
-  Schema: object | undefined;
+  requestOptions: Record<string, any> = {};
 
   constructor(
     {
@@ -107,7 +105,7 @@ class MongoApi<T = object | object[]> {
     return newInstance;
   }
 
-  collection<Schema = T>(collectionName: string) {
+  collection<Schema extends object | undefined = T>(collectionName: string) {
     const newInstance = new MongoApi(
       {
         url: this.url,
@@ -122,15 +120,16 @@ class MongoApi<T = object | object[]> {
   }
   /**
    * Find documents in the collection.
-   * @param {object} filter - The filter criteria.
+   * @param {T} filter - The filter criteria.
    * @param {object} projection - The projection criteria.
    * @param {FindOptions} options - The options for sorting and limiting the results.
    * @returns {Promise<T[]>} The found documents.
    */
   find(
-    filter: object = {},
+    filter: T,
     projection: object = {},
-    options: FindOptions = {}
+    // Limit 0 is equivalent of setting nolimit
+    options: FindOptions = { sort: {}, limit: 0, skip: 0}
   ): Promise<T[] | []> {
     const action =  "find";
     const reqOptions = {
@@ -141,6 +140,21 @@ class MongoApi<T = object | object[]> {
         ...options,
       },
     };
+    // interface Options {
+    //   body: {
+    //     filter?: object;
+    //     projection?: object;
+    //     sort?: object;
+    //     limit?: number;
+    //     document?: object;
+    //     documents?: object[];
+    //     update?: object;
+    //     pipeline?: object;
+    //   };
+    //   headers?: object;
+    //   method?: string;
+    //   next?: object;
+    // }
     return this.dispatchRequest(action, reqOptions) as Promise<T[]>;
   }
 
