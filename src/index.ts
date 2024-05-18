@@ -4,7 +4,7 @@ function ObjectId(id: string) {
   };
 }
 
-interface Options<T extends object | undefined = object> {
+interface Options<T extends object = object> {
   body: {
     filter?: T;
     projection?: object;
@@ -176,10 +176,10 @@ class MongoApi<T extends object | undefined = object | object[]> {
 
   /**
    * Insert one document into the collection.
-   * @param {object} document - The document to insert.
+   * @param {T} document - The document to insert.
    * @returns {Promise<InsertOne>} The result of the operation.
    */
-  insertOne(document: object) {
+  insertOne<T extends object>(document: T) {
     const action =  "insertOne";
     const reqOptions = {
       method: "POST",
@@ -192,10 +192,10 @@ class MongoApi<T extends object | undefined = object | object[]> {
 
   /**
    * Insert many documents into the collection.
-   * @param {object[]} documents - The documents to insert.
+   * @param {T[]} documents - The documents to insert.
    * @returns {Promise<InsertMany>} The result of the operation.
    */
-  insertMany(documents: object[]) {
+  insertMany<T extends object>(documents: T[] | [] ) {
     const action =  "insertMany";
     const reqOptions = {
       method: "POST",
