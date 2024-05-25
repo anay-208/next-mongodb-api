@@ -129,7 +129,7 @@ class MongoApi<T extends object | undefined = object | object[]> {
     filter: Partial<Record<keyof T, object | T[keyof T]>>,
     projection: object = {},
     // Limit 0 is equivalent of setting nolimit
-    options: FindOptions = { sort: {}, limit: 0, skip: 0}
+    options: FindOptions = { sort: {}}
   ): Promise<T[] | []> {
     const action =  "find";
     const reqOptions = {
