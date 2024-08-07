@@ -44,6 +44,12 @@ interface Delete {
   deletedCount: number;
 }
 
+interface ConstructorOptions {
+  url: string;
+  API_KEY: string;
+  dataSource: string;
+}
+
 class MongoApi<T extends object | undefined = object | object[]> {
   databaseName!: string;
   collectionName!: string;
